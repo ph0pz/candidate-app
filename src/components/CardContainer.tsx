@@ -8,7 +8,7 @@ import StatusTitle from "./StatusTitle";
 
 import FormDialog from "./AddCandidateComponent";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Candidate from "../interfaces/CandidateInterface";
 
 import { getData } from "../api/getData";
@@ -24,31 +24,40 @@ const Item = styled(Card)(({ theme, color }) => ({
   color: "black",
 }));
 
+const getAllCandidateStatuses = async () =>  {
+
+  await Promise.all([
+    getData(0),
+    getData(1),
+    getData(2),
+    getData(3)
+  ])
+}
 const CardContainer = () => {
   const [candidates0, setCandidates0] = useState<Candidate[]>([]);
   const [candidates1, setCandidates1] = useState<Candidate[]>([]);
   const [candidates2, setCandidates2] = useState<Candidate[]>([]);
   const [candidates3, setCandidates3] = useState<Candidate[]>([]);
 
+  const fetchData = useCallback(async () => {
+
+    const [applyRes, interviewRes, passRes, rejectRes] = await getAllCandidateStatuses()
+      setCandidates0(applyRes.data)
+      setCandidates1(interviewRes.data)
+      setCandidates2(passRes.data)
+      setCandidates3(rejectRes.data)
+
+  }, [])
+
   useEffect(() => {
-    const fetchData = async () => {
-      const response0 = await getData(0);
-      setCandidates0(response0.data);
-  
-      const response1 = await getData(1);
-      setCandidates1(response1.data);
-  
-      const response2 = await getData(2);
-      setCandidates2(response2.data);
-  
-      const response3 = await getData(3);
-      setCandidates3(response3.data);
-    };
     fetchData();
-  }, []);
+  }, [fetchData]);
+
   return (
     
-    <> <FormDialog/> <div style={{ display: "flex", justifyContent: "center" }}>
+    <> <FormDialog
+        onSubmitSuccess={fetchData}
+    /> <div style={{ display: "flex", justifyContent: "center" }}>
  
       <br />
       {/* <DragDropContext onDragEnd={onDragEnd}> */}
