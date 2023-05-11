@@ -9,11 +9,11 @@ import theme from "./initTheme"
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
 
-  <React.StrictMode>
+
     <BrowserRouter>
     <CssVarsProvider theme={theme}>
     <App />
     </CssVarsProvider>
     </BrowserRouter>
-  </React.StrictMode>,
+
 )

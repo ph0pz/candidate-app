@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
-import { Box, Button, Divider, Typography } from '@mui/material';
-import Candidate from '../interfaces/CandidateInterface';
+import { Avatar, Box, Button, Divider, Typography } from '@mui/material';
+import Candidate from '../../interfaces/CandidateInterface';
 import { useLocation } from 'react-router-dom';
-import { getDataFromId, updateCandidateData} from '../api/getData';
+import { getDataFromId, updateCandidateData} from '../../api/getData';
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { z } from 'zod';
 
@@ -25,6 +25,7 @@ function EditProfileForm() {
     const fetchData = async () => {
       const response = await getDataFromId(candidateId)
       setCandidate(response.data);
+      console.log(candidates[0].profilePicPath)
 
     };
 
@@ -73,11 +74,11 @@ function EditProfileForm() {
 
     try {
         schema.parse(formData);
-        console.log('Form data is valid');
+
         updateCandidateData(candidateId,formData)
             .then((response: { data: object; }) => {
                
-                window.location.reload()
+                // window.location.reload()
                 
                 alert("candidate data updated !") 
          
@@ -86,8 +87,7 @@ function EditProfileForm() {
                 console.error(error);
             });
     } catch (error) {
-        alert('Form data is invalid:');
-        console.error('Form data is invalid:', error);
+        alert('Form data is Invalid:');
     }
 }
   
@@ -97,7 +97,7 @@ function EditProfileForm() {
 
       {candidates.map((candidate: Candidate) => (
         <div key={candidate.candidateId}>
-          
+         
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Typography
               color="black"
@@ -108,12 +108,13 @@ function EditProfileForm() {
               marginBottom={2}
               fontWeight="bold"
             >
+               <Avatar alt= "" src= {candidate.profilePicPath} sx={{ width: 200, height: 200, borderRadius: '50%', display : "flex" , justifyContent : "center",marginBottom : "20px"}} />
               {candidate.name} {candidate.score}
             </Typography>
             <div style={{ marginLeft: '10px' }}>
               <ModeEditIcon onClick={handleModeEditIconClick} />
             </div>
-          </div>
+          </div> 
 
           <br />
           <Divider color="neutral" />
@@ -161,6 +162,7 @@ function EditProfileForm() {
                   label="Resume Path"
                   type=""
                   variant="standard"
+                  
                   defaultValue={candidate.resumeFilePath}
                 
                 />
@@ -170,7 +172,7 @@ function EditProfileForm() {
                   label="Picture Path"
                   type=""
                   variant="standard"
-                  defaultValue={candidate.profileFilePath}
+                  defaultValue={candidate.profilePicPath}
                 
                 />
                 <TextField

@@ -9,6 +9,9 @@ const postNewCandidate =async (data : object) => {
 const getDataFromId = async (candidateId: number) => {
     return await axios.get(`https://localhost:7079/api/candidate/${candidateId}`);
   };
+const getAllCandidate =async () => {
+    return await axios.get(`https://localhost:7079/api/candidate`);
+}
 
 const updateCandidateData =async (candidateId : number,data:object) => {
     return await axios.put(`https://localhost:7079/api/candidate/${candidateId}`,data);
@@ -45,8 +48,12 @@ const addComment =async (candidateId:number, commentText : string) => {
   return await axios.post(`https://localhost:7079/api/comment/${candidateId}/${commentText}`);
 }
 
-const updateComment =async (candidateId : number,data:object) => {
-  return await axios.put(`https://localhost:7079/api/comment/${candidateId}`,data);
+const updateComment =async (commentId : number, data:object) => {
+  return await axios.put(`https://localhost:7079/api/comment/${commentId}`,data);
+}
+
+const changeStatus =async (candidateId: number, statusId : number) => {
+  return await axios.put(`https://localhost:7079/api/candidate/candidateId/${statusId}?candidateId=${candidateId}`);
 }
 // const getData = async () => {
 //     return await axios.get(`https://localhost:7079/api/candidate/`);
@@ -67,5 +74,6 @@ export {
     getComment,
     deleteComment,
     addComment,
-    updateComment
+    updateComment,
+    changeStatus
 }

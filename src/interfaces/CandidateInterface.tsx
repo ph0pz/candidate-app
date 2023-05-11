@@ -4,9 +4,9 @@ interface Candidate {
     email : string,
     phoneNumber : number,
     resumeFilePath : string,
-    profileFilePath : string ,
+    profilePicPath : string ,
     cvPath : string ,
-    statusId : number,
+    statusID : number,
     score : number,
     interviewDate : string
 } export default Candidate

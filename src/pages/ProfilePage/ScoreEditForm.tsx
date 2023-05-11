@@ -2,9 +2,28 @@ import React, { useEffect, useState } from 'react'
 import TextField from '@mui/material/TextField';
 import { Box, Button, Divider, Typography } from '@mui/material'
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import Evaluation from '../interfaces/EvaluationInterface';
-import { getScoreFromId, updateCalScore } from '../api/getData';
-import { updateEvaluationScore } from '../api/getData';
+import Evaluation from '../../interfaces/EvaluationInterface';
+import { getScoreFromId, updateCalScore, updateEvaluationScore } from '../../api/getData';
+import { z } from "zod";
+const scoreSchema = z.object({
+  teamwork: z.number().min(0).max(10),
+  experience: z.number().min(0).max(10),
+  attitude: z.number().min(0).max(10),
+  personality: z.number().min(0).max(10),
+  skill: z.number().min(0).max(10),
+});
+const candidateDefault = {
+  "candidateId": 0,
+  "statusID": 0,
+  "name": "string",
+  "email": "string",
+  "score": 0,
+  "interviewDate": "string",
+  "phoneNumber": "string",
+  "resumeFilePath": "string",
+  "profilePicPath": "string",
+  "cvPath": "string"
+}
 function ScoreForm() {
   const candidateId = Number(location.search.split('?')[1]);
   const [evaluation, setEvaluation] = useState<Evaluation[]>([]);
@@ -13,7 +32,7 @@ function ScoreForm() {
   const [attitude, setAttitudeScore] = useState<number>(0);
   const [personality, setPersonalityScore] = useState<number>(0);
   const [skill, setSkillsScore] = useState<number>(0);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       const response = await getScoreFromId(candidateId)
@@ -37,52 +56,50 @@ function ScoreForm() {
     setShowButton(true);
   };
   const handleCloseEdit = () => {
-    const handleCloseEdit = () => {
-      setTeamworkScore(evaluation[0].score);
-      setExperienceScore(evaluation[1].score);
-      setAttitudeScore(evaluation[2].score);
-      setPersonalityScore(evaluation[3].score);
-      setSkillsScore(evaluation[4].score);
-      setShowButton(false);
-    };
+
+    setTeamworkScore(evaluation[0].score);
+    setExperienceScore(evaluation[1].score);
+    setAttitudeScore(evaluation[2].score);
+    setPersonalityScore(evaluation[3].score);
+    setSkillsScore(evaluation[4].score);
+    setShowButton(false);
+
     setShowButton(false);
   }
   const handleSubmit = async () => {
-    const avgScore = (teamwork + personality + attitude + skill + experience) / 5;
-    const candidateDefault = {
-      "candidateId": 0,
-      "statusID": 0,
-      "name": "string",
-      "email": "string",
-      "score": 0,
-      "interviewDate": "string",
-      "phoneNumber": "string",
-      "resumeFilePath": "string",
-      "profilePicPath": "string",
-      "cvPath": "string"
-    }
-    const defaultDescription = ["Teamwork","Experience","Attitude","Personality","Skill"]
-    const newValue = [teamwork,experience,attitude,personality,skill]
-    for (let i = 0; i <=4 ; i++){
-      const response = await updateEvaluationScore(evaluation[i].evaluationId,{
-        "evaluationId": evaluation[i].evaluationId,
-        "candidateId": candidateId,
-        "candidate": candidateDefault,
-        "scoreType": i,
-        "score": newValue[i],
-        "scoreTypeDescription": defaultDescription[i]
+    try {
+      scoreSchema.parse({ teamwork, experience, attitude, personality, skill });
+      // If validation succeeds, continue with submitting the data
+      const avgScore = (teamwork + personality + attitude + skill + experience) / 5;
+
+      const defaultDescription = ["Teamwork", "Experience", "Attitude", "Personality", "Skill"]
+      const newValue = [teamwork, experience, attitude, personality, skill]
+      for (let i = 0; i <= 4; i++) {
+        const response = await updateEvaluationScore(evaluation[i].evaluationId, {
+          "evaluationId": evaluation[i].evaluationId,
+          "candidateId": candidateId,
+          "candidate": candidateDefault,
+          "scoreType": i,
+          "score": newValue[i],
+          "scoreTypeDescription": defaultDescription[i]
+        }
+        )
       }
-       )
+
+
+
+      await updateCalScore(candidateId, avgScore)
+      console.log("avg score", candidateId);
+      console.log(avgScore)
+      window.location.reload()
+      // ...
+    } catch (error) {
+      // If validation fails, display an error message or handle the error
+      console.error(error);
+      alert("the score should be between 0 - 10")
     }
-
-    
-    
-    await updateCalScore(candidateId,avgScore)
-    console.log("avg score",candidateId);
-    console.log(avgScore)
-    window.location.reload()
-
   };
+
 
 
   return (
@@ -123,12 +140,13 @@ function ScoreForm() {
               autoFocus
               id="team"
               label="Teamwork"
-              type = "number"
+              type="number"
               InputLabelProps={{
                 shrink: true,
               }}
               value={teamwork}
               onChange={(event) => setTeamworkScore(Number(event.target.value))}
+              
 
 
               variant="standard" />

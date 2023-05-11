@@ -42,7 +42,7 @@ function FormDialog() {
         score: 0,
         interviewDate: interviewDateInput.value,
         phoneNumber: phoneInput.value,
-        resumeFilePath: resumePathInput.value,
+        resumeFilePath: resumePathInput.value.split('\\').pop(),
         profilePicPath: picturePathInput.value,
         cvPath: "string"
     };
@@ -68,8 +68,9 @@ function FormDialog() {
         postNewCandidate(formData)
             .then(response => {
                 console.log(response.data);
-                window.location.reload()
+                
                 handleDefaultScore(response.data.candidateId)
+                window.location.reload()
                 handleClose();
                 
                 // close the dialog after successful submission
@@ -86,7 +87,7 @@ function FormDialog() {
         evaluationId : 0,
         candidateId : 0,
         scoreType : 0,
-        score : 0,
+        score : 0, 
         scoreTypeDescription : typeDesArr[0]
     }
     const handleDefaultScore = (candidateId : number) => {
@@ -116,7 +117,7 @@ function FormDialog() {
                     }}
                     onClick={() => {
                         handleClickOpen()
-                        console.log('Button clicked!');
+
                     }}
                 >
                     <IconButton sx={{ color: 'white' }}>
@@ -165,7 +166,7 @@ function FormDialog() {
                             margin="dense"
                             id="file"
                             label="ResumePath"
-                            type=""
+                            type="file"
                             fullWidth
                             variant="standard"
                         />

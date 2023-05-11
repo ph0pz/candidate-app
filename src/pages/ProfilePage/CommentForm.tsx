@@ -3,12 +3,12 @@ import TextField from '@mui/material/TextField';
 import { Box, DialogContentText, Divider, Typography } from '@mui/material';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getComment, deleteComment } from '../api/getData';
-import Comment from '../interfaces/CommentInterface';
+import { getComment ,deleteComment,updateComment,addComment} from '../../api/getData';
+import Comment from '../../interfaces/CommentInterface';
 import SaveIcon from '@mui/icons-material/Save';
-import { updateComment } from '../api/getData';
-import Candidate from '../interfaces/CandidateInterface';
-import { addComment } from '../api/getData';
+
+
+
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -83,7 +83,7 @@ function CommentForm() {
           marginBottom={2}
           fontWeight="bold"
         >
-          Evaluation and Score
+          Evaluation and Score 
         </Typography>
         <IconButton color="primary" onClick={handleClickOpen}>
       <AddCircleOutlineIcon />
